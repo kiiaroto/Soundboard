@@ -10,13 +10,25 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 import model.Son;
 
 public class MusicPlayer {
-	
+
+	AdvancedPlayer advancedPlayer = null;
+	Thread playerThread;
+
 	public void play(Son son) throws FileNotFoundException, JavaLayerException {
-			
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(son.getFile()));
-			
-			AdvancedPlayer advancedPlayer = new AdvancedPlayer(bis, FactoryRegistry.systemRegistry().createAudioDevice());
-			advancedPlayer.play(100);
+
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(son.getFile()));
+
+		advancedPlayer = new AdvancedPlayer(bis, FactoryRegistry.systemRegistry().createAudioDevice());
+		
+		advancedPlayer.play(500);
+		
+		
 	}
 	
+	public void killPlayer() {
+		if(advancedPlayer != null) {
+			advancedPlayer.stop();
+			advancedPlayer = null;
+		}
+	}
 }

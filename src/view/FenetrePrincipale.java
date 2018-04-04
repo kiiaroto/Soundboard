@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -23,17 +25,19 @@ import tools.MusicPlayer;
 
 public class FenetrePrincipale {
 	
-	HashMap<String, JButton> buttonMap = new HashMap<String, JButton>();
-	ListeDeSons listeDesSon = new ListeDeSons();
+	private HashMap<String, JButton> buttonMap = new HashMap<String, JButton>();
+	private ListeDeSons listeDesSon = new ListeDeSons();
 	
-	JPopupMenu popupMenu;
-	JFrame maFenetre;
-	Son son;
+	private JPopupMenu popupMenu;
+	private JFrame maFenetre;
+	private Son son;
+	private MusicPlayer mp;
+	private Thread playerThread;
 	
 	public void affiche(int nombreDeLignes, int nombreDeColonnes) {
 		
 		maFenetre = new JFrame("SR SoundBoard");
-		maFenetre.setLayout(new GridLayout(nombreDeLignes, nombreDeColonnes));
+		maFenetre.setLayout(new BorderLayout());
 		
 			// Création du Menu en haut de la fenetre
 			JMenuBar barreDeMenu = new JMenuBar();
@@ -43,23 +47,35 @@ public class FenetrePrincipale {
 		// Ajout de la barre de menu a la fenetre
 		maFenetre.setJMenuBar(barreDeMenu);
 		
-		
-			
+			JPanel buttonGrid = new JPanel();
+			buttonGrid.setLayout(new GridLayout(nombreDeLignes, nombreDeColonnes));
+				
 			for (int i = 0; i < nombreDeLignes * nombreDeColonnes; i++) {
 				String buttonKey = "button" + String.valueOf(i);
 				JButton button = new JButton();
-				
+
 				popupMenu = new JPopupMenu();
-					JMenuItem chooseFile = new JMenuItem("Choose File");
-					chooseFile.addActionListener(new ChooseFileListener());
+				JMenuItem chooseFile = new JMenuItem("Choose File");
+				chooseFile.addActionListener(new ChooseFileListener());
 				popupMenu.add(chooseFile);
-				
+
 				button.setComponentPopupMenu(popupMenu);
 				button.addActionListener(new ButtonListener());
 				buttonMap.put(buttonKey, button);
-				maFenetre.add(buttonMap.get(buttonKey));
-				
+				buttonGrid.add(buttonMap.get(buttonKey));
+
 			}
+		maFenetre.add(buttonGrid, BorderLayout.CENTER);
+		
+			JPanel stopGrid = new JPanel();
+			stopGrid.setLayout(new BorderLayout(1, 1));
+			
+			JButton stop = new JButton("STOP");
+			stop.addActionListener(new StopListener());
+			
+			stopGrid.add(stop);
+			
+		maFenetre.add(stopGrid, BorderLayout.SOUTH);
 		
 		maFenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		maFenetre.pack();
@@ -71,21 +87,40 @@ public class FenetrePrincipale {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			try {
-				System.out.println("test");
-				JButton button = (JButton) e.getSource();
+			System.out.println("test");
+			JButton button = (JButton) e.getSource();
+			if (!button.getText().isEmpty()) {
 				son = listeDesSon.getSonByName(button.getText());
-				MusicPlayer mp = new MusicPlayer();
+				mp = new MusicPlayer();
 				
-				mp.play(son);
-				
-				
-			} catch (FileNotFoundException | JavaLayerException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				playerThread = new Thread() {
+					public void run() {
+						try {
+							mp.play(son);
+						} catch (JavaLayerException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				};
+				playerThread.start();
 			}
 			
+		}
+		
+	}
+	
+	public class StopListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			System.out.println("stop");
+			//Deprecated
+			//playerThread.stop();
 		}
 		
 	}
@@ -125,7 +160,4 @@ public class FenetrePrincipale {
 		}
 		
 	}
-	
-	
-
 }
