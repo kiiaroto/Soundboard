@@ -32,7 +32,7 @@ public class FenetrePrincipale {
 	
 	public void affiche(int nombreDeLignes, int nombreDeColonnes) {
 		
-		maFenetre = new JFrame("Fenetre");
+		maFenetre = new JFrame("SR SoundBoard");
 		maFenetre.setLayout(new GridLayout(nombreDeLignes, nombreDeColonnes));
 		
 			// Création du Menu en haut de la fenetre
