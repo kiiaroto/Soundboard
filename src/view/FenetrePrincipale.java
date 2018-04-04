@@ -121,6 +121,7 @@ public class FenetrePrincipale {
 			System.out.println("stop");
 			//Deprecated
 			//playerThread.stop();
+			// https://www.youtube.com/watch?v=Rk_4jCmAt48
 		}
 		
 	}
