@@ -32,7 +32,7 @@ public class FenetrePrincipale {
 	private JFrame maFenetre;
 	private Son son;
 	private MusicPlayer mp;
-	private Thread playerThread;
+	private Thread playerThread = null;
 	
 	public void affiche(int nombreDeLignes, int nombreDeColonnes) {
 		
@@ -42,6 +42,9 @@ public class FenetrePrincipale {
 			// Création du Menu en haut de la fenetre
 			JMenuBar barreDeMenu = new JMenuBar();
 				JMenu option = new JMenu("Option");
+					JMenuItem optionItem = new JMenuItem("Option");
+					optionItem.addActionListener(new OptionListener());
+				option.add(optionItem);
 			barreDeMenu.add(option);
 			
 		// Ajout de la barre de menu a la fenetre
@@ -92,6 +95,9 @@ public class FenetrePrincipale {
 			if (!button.getText().isEmpty()) {
 				son = listeDesSon.getSonByName(button.getText());
 				mp = new MusicPlayer();
+				if (playerThread != null) {
+					playerThread.stop();
+				}
 				
 				playerThread = new Thread() {
 					public void run() {
@@ -120,7 +126,9 @@ public class FenetrePrincipale {
 			// TODO Auto-generated method stub
 			System.out.println("stop");
 			//Deprecated
-			//playerThread.stop();
+			if (playerThread != null) {
+				playerThread.stop();
+			}
 			// https://www.youtube.com/watch?v=Rk_4jCmAt48
 		}
 		
@@ -158,6 +166,18 @@ public class FenetrePrincipale {
 			maFenetre.revalidate();
 			maFenetre.pack();
 			maFenetre.repaint();
+		}
+		
+	}
+	
+	public class OptionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("Option !!");
+			FenetreDesOptions fenetreDesOption = new FenetreDesOptions();
+			fenetreDesOption.affiche();
 		}
 		
 	}

@@ -12,7 +12,6 @@ import model.Son;
 public class MusicPlayer {
 
 	AdvancedPlayer advancedPlayer = null;
-	Thread playerThread;
 
 	public void play(Son son) throws FileNotFoundException, JavaLayerException {
 
